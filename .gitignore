@@ -1,0 +1,42 @@
+# Python environments and generated caches
+.venv/
+.venv-*/
+venv/
+env/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+build/
+dist/
+*.egg-info/
+.coverage
+htmlcov/
+
+# Local data and generated annotations
+reto-1-cartografa-automatizada/
+data_panoptic_auto/
+data_panoptic_stuff/
+
+# Training runs, checkpoints, and inference outputs
+training/runs/
+work_dirs/
+tmpDir/
+*.pth
+*.pt
+*.ckpt
+*.safetensors
+*.pkl
+*.pickle
+*.npz
+*.log
+*.log.json
+
+# Local credentials and editor/OS files
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+.DS_Store

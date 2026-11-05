@@ -1,0 +1,8 @@
+# Install torch/torchvision first from the PyTorch CUDA 12.1 wheel index.
+transformers==4.46.3
+accelerate>=1.1,<2
+numpy>=1.24,<2
+Pillow>=10
+matplotlib>=3.7
+safetensors>=0.4
+scipy>=1.10,<2

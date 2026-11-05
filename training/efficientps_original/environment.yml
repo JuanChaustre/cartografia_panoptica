@@ -1,0 +1,21 @@
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.7.9
+  - pip=23.1.2
+  - cython=0.29.21
+  - numpy=1.19.5
+  - cudatoolkit=11.1.1
+  - libxcrypt
+  - terminaltables=3.1.10
+  - gcc_linux-64=8
+  - gxx_linux-64=8
+  - pip:
+      - mmcv==0.5.9
+      - matplotlib==3.3.3
+      - opencv-python==4.5.1.48
+      - pillow==6.2.2
+      - scipy==1.6.0
+      - tensorboard==2.4.0
+      - tqdm==4.56.0
