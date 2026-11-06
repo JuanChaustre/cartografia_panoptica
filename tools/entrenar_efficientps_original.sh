@@ -3,6 +3,7 @@ set -euo pipefail
 
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 UPSTREAM_ROOT="$PROJECT_ROOT/third_party/EfficientPS"
+# Mantiene aisladas las dependencias legadas del entorno moderno de métricas.
 ENV_PREFIX="${EFFICIENTPS_ENV_PREFIX:-$HOME/.cache/cartografia-panoptica/efficientps-original}"
 METRICS_PYTHON="${METRICS_PYTHON:-$PROJECT_ROOT/.venv-mask2former/bin/python}"
 RUN_ROOT="${WORK_DIR:-$PROJECT_ROOT/training/runs/efficientps_original}"
@@ -48,6 +49,7 @@ fi
   --overwrite
 mkdir -p "$RUN_ROOT"
 
+# En reanudaciones se conserva el checkpoint con menor pérdida de validation.
 BEST_CHECKPOINT="$RUN_ROOT/best_validation_loss.pth"
 if [[ -n "$RESUME_FROM" && ! -f "$RUN_ROOT/best_validation_loss.pth" ]]; then
   "$METRICS_PYTHON" - "$RUN_ROOT/loss_history.csv" "$RUN_ROOT" "$BEST_CHECKPOINT" <<'PY'
@@ -76,6 +78,7 @@ export PYTHONPATH="$UPSTREAM_ROOT:$PROJECT_ROOT/training${PYTHONPATH:+:$PYTHONPA
 export EFFICIENTPS_PANOPTIC_OUTPUT_DIR="$RUN_ROOT/validation_raw_predictions"
 export CARTOGRAFIA_PROJECT_ROOT="$PROJECT_ROOT"
 
+# El test se evalúa únicamente después de terminar el entrenamiento.
 TRAIN_ARGS=(tools/train.py "$CONFIG" --work_dir "$RUN_ROOT" --validate --seed 42)
 if [[ -n "$RESUME_FROM" ]]; then
   TRAIN_ARGS+=(--resume_from "$RESUME_FROM")

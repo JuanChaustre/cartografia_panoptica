@@ -1,0 +1,418 @@
+{
+  "schema_version": 1,
+  "seed": 42,
+  "split_method": "seeded_random_by_image",
+  "ratios": {
+    "train": 0.7,
+    "validation": 0.15,
+    "test": 0.15000000000000005
+  },
+  "splits": {
+    "train": [
+      {
+        "image_id": 43,
+        "file_name": "Dataset segmentacion/recorte_43.png"
+      },
+      {
+        "image_id": 42,
+        "file_name": "Dataset segmentacion/recorte_42.png"
+      },
+      {
+        "image_id": 92,
+        "file_name": "Dataset segmentacion/recorte_92.png"
+      },
+      {
+        "image_id": 10,
+        "file_name": "Dataset segmentacion/recorte_10.png"
+      },
+      {
+        "image_id": 66,
+        "file_name": "Dataset segmentacion/recorte_66.png"
+      },
+      {
+        "image_id": 51,
+        "file_name": "Dataset segmentacion/recorte_51.png"
+      },
+      {
+        "image_id": 2,
+        "file_name": "Dataset segmentacion/recorte_2.png"
+      },
+      {
+        "image_id": 71,
+        "file_name": "Dataset segmentacion/recorte_71.png"
+      },
+      {
+        "image_id": 16,
+        "file_name": "Dataset segmentacion/recorte_16.png"
+      },
+      {
+        "image_id": 79,
+        "file_name": "Dataset segmentacion/recorte_79.png"
+      },
+      {
+        "image_id": 74,
+        "file_name": "Dataset segmentacion/recorte_74.png"
+      },
+      {
+        "image_id": 11,
+        "file_name": "Dataset segmentacion/recorte_11.png"
+      },
+      {
+        "image_id": 56,
+        "file_name": "Dataset segmentacion/recorte_56.png"
+      },
+      {
+        "image_id": 57,
+        "file_name": "Dataset segmentacion/recorte_57.png"
+      },
+      {
+        "image_id": 73,
+        "file_name": "Dataset segmentacion/recorte_73.png"
+      },
+      {
+        "image_id": 46,
+        "file_name": "Dataset segmentacion/recorte_46.png"
+      },
+      {
+        "image_id": 49,
+        "file_name": "Dataset segmentacion/recorte_49.png"
+      },
+      {
+        "image_id": 93,
+        "file_name": "Dataset segmentacion/recorte_93.png"
+      },
+      {
+        "image_id": 77,
+        "file_name": "Dataset segmentacion/recorte_77.png"
+      },
+      {
+        "image_id": 38,
+        "file_name": "Dataset segmentacion/recorte_38.png"
+      },
+      {
+        "image_id": 31,
+        "file_name": "Dataset segmentacion/recorte_31.png"
+      },
+      {
+        "image_id": 22,
+        "file_name": "Dataset segmentacion/recorte_22.png"
+      },
+      {
+        "image_id": 33,
+        "file_name": "Dataset segmentacion/recorte_33.png"
+      },
+      {
+        "image_id": 97,
+        "file_name": "Dataset segmentacion/recorte_97.png"
+      },
+      {
+        "image_id": 81,
+        "file_name": "Dataset segmentacion/recorte_81.png"
+      },
+      {
+        "image_id": 50,
+        "file_name": "Dataset segmentacion/recorte_50.png"
+      },
+      {
+        "image_id": 84,
+        "file_name": "Dataset segmentacion/recorte_84.png"
+      },
+      {
+        "image_id": 27,
+        "file_name": "Dataset segmentacion/recorte_27.png"
+      },
+      {
+        "image_id": 88,
+        "file_name": "Dataset segmentacion/recorte_88.png"
+      },
+      {
+        "image_id": 34,
+        "file_name": "Dataset segmentacion/recorte_34.png"
+      },
+      {
+        "image_id": 9,
+        "file_name": "Dataset segmentacion/recorte_9.png"
+      },
+      {
+        "image_id": 48,
+        "file_name": "Dataset segmentacion/recorte_48.png"
+      },
+      {
+        "image_id": 60,
+        "file_name": "Dataset segmentacion/recorte_60.png"
+      },
+      {
+        "image_id": 64,
+        "file_name": "Dataset segmentacion/recorte_64.png"
+      },
+      {
+        "image_id": 75,
+        "file_name": "Dataset segmentacion/recorte_75.png"
+      },
+      {
+        "image_id": 45,
+        "file_name": "Dataset segmentacion/recorte_45.png"
+      },
+      {
+        "image_id": 99,
+        "file_name": "Dataset segmentacion/recorte_99.png"
+      },
+      {
+        "image_id": 53,
+        "file_name": "Dataset segmentacion/recorte_53.png"
+      },
+      {
+        "image_id": 86,
+        "file_name": "Dataset segmentacion/recorte_86.png"
+      },
+      {
+        "image_id": 13,
+        "file_name": "Dataset segmentacion/recorte_13.png"
+      },
+      {
+        "image_id": 37,
+        "file_name": "Dataset segmentacion/recorte_37.png"
+      },
+      {
+        "image_id": 24,
+        "file_name": "Dataset segmentacion/recorte_24.png"
+      },
+      {
+        "image_id": 40,
+        "file_name": "Dataset segmentacion/recorte_40.png"
+      },
+      {
+        "image_id": 41,
+        "file_name": "Dataset segmentacion/recorte_41.png"
+      },
+      {
+        "image_id": 19,
+        "file_name": "Dataset segmentacion/recorte_19.png"
+      },
+      {
+        "image_id": 67,
+        "file_name": "Dataset segmentacion/recorte_67.png"
+      },
+      {
+        "image_id": 62,
+        "file_name": "Dataset segmentacion/recorte_62.png"
+      },
+      {
+        "image_id": 61,
+        "file_name": "Dataset segmentacion/recorte_61.png"
+      },
+      {
+        "image_id": 8,
+        "file_name": "Dataset segmentacion/recorte_8.png"
+      },
+      {
+        "image_id": 35,
+        "file_name": "Dataset segmentacion/recorte_35.png"
+      },
+      {
+        "image_id": 100,
+        "file_name": "Dataset segmentacion/recorte_100.png"
+      },
+      {
+        "image_id": 47,
+        "file_name": "Dataset segmentacion/recorte_47.png"
+      },
+      {
+        "image_id": 3,
+        "file_name": "Dataset segmentacion/recorte_3.png"
+      },
+      {
+        "image_id": 52,
+        "file_name": "Dataset segmentacion/recorte_52.png"
+      },
+      {
+        "image_id": 17,
+        "file_name": "Dataset segmentacion/recorte_17.png"
+      },
+      {
+        "image_id": 39,
+        "file_name": "Dataset segmentacion/recorte_39.png"
+      },
+      {
+        "image_id": 59,
+        "file_name": "Dataset segmentacion/recorte_59.png"
+      },
+      {
+        "image_id": 69,
+        "file_name": "Dataset segmentacion/recorte_69.png"
+      },
+      {
+        "image_id": 23,
+        "file_name": "Dataset segmentacion/recorte_23.png"
+      },
+      {
+        "image_id": 63,
+        "file_name": "Dataset segmentacion/recorte_63.png"
+      },
+      {
+        "image_id": 25,
+        "file_name": "Dataset segmentacion/recorte_25.png"
+      },
+      {
+        "image_id": 6,
+        "file_name": "Dataset segmentacion/recorte_6.png"
+      },
+      {
+        "image_id": 7,
+        "file_name": "Dataset segmentacion/recorte_7.png"
+      },
+      {
+        "image_id": 68,
+        "file_name": "Dataset segmentacion/recorte_68.png"
+      },
+      {
+        "image_id": 83,
+        "file_name": "Dataset segmentacion/recorte_83.png"
+      },
+      {
+        "image_id": 20,
+        "file_name": "Dataset segmentacion/recorte_20.png"
+      },
+      {
+        "image_id": 80,
+        "file_name": "Dataset segmentacion/recorte_80.png"
+      },
+      {
+        "image_id": 44,
+        "file_name": "Dataset segmentacion/recorte_44.png"
+      },
+      {
+        "image_id": 91,
+        "file_name": "Dataset segmentacion/recorte_91.png"
+      },
+      {
+        "image_id": 21,
+        "file_name": "Dataset segmentacion/recorte_21.png"
+      }
+    ],
+    "validation": [
+      {
+        "image_id": 1,
+        "file_name": "Dataset segmentacion/recorte_1.png"
+      },
+      {
+        "image_id": 96,
+        "file_name": "Dataset segmentacion/recorte_96.png"
+      },
+      {
+        "image_id": 58,
+        "file_name": "Dataset segmentacion/recorte_58.png"
+      },
+      {
+        "image_id": 94,
+        "file_name": "Dataset segmentacion/recorte_94.png"
+      },
+      {
+        "image_id": 54,
+        "file_name": "Dataset segmentacion/recorte_54.png"
+      },
+      {
+        "image_id": 90,
+        "file_name": "Dataset segmentacion/recorte_90.png"
+      },
+      {
+        "image_id": 26,
+        "file_name": "Dataset segmentacion/recorte_26.png"
+      },
+      {
+        "image_id": 72,
+        "file_name": "Dataset segmentacion/recorte_72.png"
+      },
+      {
+        "image_id": 85,
+        "file_name": "Dataset segmentacion/recorte_85.png"
+      },
+      {
+        "image_id": 78,
+        "file_name": "Dataset segmentacion/recorte_78.png"
+      },
+      {
+        "image_id": 65,
+        "file_name": "Dataset segmentacion/recorte_65.png"
+      },
+      {
+        "image_id": 30,
+        "file_name": "Dataset segmentacion/recorte_30.png"
+      },
+      {
+        "image_id": 28,
+        "file_name": "Dataset segmentacion/recorte_28.png"
+      },
+      {
+        "image_id": 89,
+        "file_name": "Dataset segmentacion/recorte_89.png"
+      },
+      {
+        "image_id": 98,
+        "file_name": "Dataset segmentacion/recorte_98.png"
+      }
+    ],
+    "test": [
+      {
+        "image_id": 5,
+        "file_name": "Dataset segmentacion/recorte_5.png"
+      },
+      {
+        "image_id": 55,
+        "file_name": "Dataset segmentacion/recorte_55.png"
+      },
+      {
+        "image_id": 76,
+        "file_name": "Dataset segmentacion/recorte_76.png"
+      },
+      {
+        "image_id": 12,
+        "file_name": "Dataset segmentacion/recorte_12.png"
+      },
+      {
+        "image_id": 70,
+        "file_name": "Dataset segmentacion/recorte_70.png"
+      },
+      {
+        "image_id": 87,
+        "file_name": "Dataset segmentacion/recorte_87.png"
+      },
+      {
+        "image_id": 14,
+        "file_name": "Dataset segmentacion/recorte_14.png"
+      },
+      {
+        "image_id": 18,
+        "file_name": "Dataset segmentacion/recorte_18.png"
+      },
+      {
+        "image_id": 29,
+        "file_name": "Dataset segmentacion/recorte_29.png"
+      },
+      {
+        "image_id": 32,
+        "file_name": "Dataset segmentacion/recorte_32.png"
+      },
+      {
+        "image_id": 36,
+        "file_name": "Dataset segmentacion/recorte_36.png"
+      },
+      {
+        "image_id": 95,
+        "file_name": "Dataset segmentacion/recorte_95.png"
+      },
+      {
+        "image_id": 4,
+        "file_name": "Dataset segmentacion/recorte_4.png"
+      },
+      {
+        "image_id": 15,
+        "file_name": "Dataset segmentacion/recorte_15.png"
+      },
+      {
+        "image_id": 82,
+        "file_name": "Dataset segmentacion/recorte_82.png"
+      }
+    ]
+  }
+}

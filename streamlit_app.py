@@ -61,7 +61,10 @@ def load_categories(path_string: str) -> list[dict[str, Any]]:
 def load_mask2former() -> tuple[Mask2FormerImageProcessor, Mask2FormerForUniversalSegmentation]:
     checkpoint_dir = MASK2FORMER_RUN / "best_model"
     if not (checkpoint_dir / "model.safetensors").is_file():
-        raise FileNotFoundError(f"No encuentro los pesos de Mask2Former: {checkpoint_dir}")
+        raise FileNotFoundError(
+            f"No encuentro los pesos de Mask2Former: {checkpoint_dir}. "
+            "Descárgalos con `bash tools/descargar_modelos.sh`."
+        )
     processor = Mask2FormerImageProcessor.from_pretrained(checkpoint_dir)
     model = Mask2FormerForUniversalSegmentation.from_pretrained(checkpoint_dir)
     model.eval()
@@ -71,6 +74,7 @@ def load_mask2former() -> tuple[Mask2FormerImageProcessor, Mask2FormerForUnivers
 def predict_mask2former(image: Image.Image) -> tuple[np.ndarray, np.ndarray]:
     processor, model = load_mask2former()
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # El modelo vuelve a CPU al terminar para liberar VRAM antes de EfficientPS.
     resized = image.resize(
         (MASK2FORMER_IMAGE_SIZE, MASK2FORMER_IMAGE_SIZE),
         resample=Image.Resampling.BILINEAR,
@@ -122,13 +126,16 @@ def predict_mask2former(image: Image.Image) -> tuple[np.ndarray, np.ndarray]:
 
 
 def predict_efficientps(image: Image.Image) -> tuple[np.ndarray, np.ndarray]:
+    # EfficientPS depende de Python/PyTorch antiguos y se ejecuta en otro proceso
+    # para no mezclar sus bibliotecas con el entorno moderno de Streamlit.
     python = EFFICIENTPS_ENV / "bin/python"
     if not python.is_file():
         raise FileNotFoundError(f"No encuentro el entorno EfficientPS: {python}")
     if not EFFICIENTPS_CHECKPOINT.is_file():
         raise FileNotFoundError(
             f"No encuentro el checkpoint de EfficientPS original: "
-            f"{EFFICIENTPS_CHECKPOINT}"
+            f"{EFFICIENTPS_CHECKPOINT}. Descárgalo con "
+            "`bash tools/descargar_modelos.sh`."
         )
     upstream_root = PROJECT_ROOT / "third_party/EfficientPS"
     with tempfile.TemporaryDirectory(prefix="cartografia-streamlit-") as directory:
@@ -191,6 +198,7 @@ def crop_square(
     if not 0 <= horizontal_position <= 100 or not 0 <= vertical_position <= 100:
         raise ValueError("La posición del recorte debe estar entre 0 y 100.")
     width, height = image.size
+    # El entrenamiento usa recortes cuadrados; se conserva una región movible.
     side = min(width, height)
     left = round((width - side) * horizontal_position / 100)
     top = round((height - side) * vertical_position / 100)
@@ -235,6 +243,7 @@ def render_markdown_report(report_path: Path) -> None:
     content = report_path.read_text(encoding="utf-8")
     image_pattern = re.compile(r"!\[([^\]]*)\]\(([^)]+)\)")
     cursor = 0
+    # Renderiza las figuras como imágenes locales y el resto como Markdown.
     for match in image_pattern.finditer(content):
         markdown_chunk = content[cursor : match.start()].strip()
         if markdown_chunk:

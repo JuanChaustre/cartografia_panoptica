@@ -115,6 +115,7 @@ def mean_epoch_loss(
 ) -> float:
     training = optimizer is not None
     model.train(training)
+    # batch_size=1 limita el consumo de memoria en la GPU usada para este proyecto.
     dataset.set_epoch(getattr(dataset, "epoch", 0) + 1)
     total_loss = 0.0
     sample_count = 0
@@ -233,9 +234,12 @@ def main() -> None:
     args = parse_args()
     seed_everything(args.seed)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # AMP reduce memoria y acelera CUDA; en CPU se desactiva automáticamente.
     amp = device.type == "cuda" and not args.no_amp
     print(f"Dispositivo: {device}; AMP: {amp}; checkpoint: {args.checkpoint}")
 
+    # El test se carga aquí, pero solo se evalúa tras seleccionar el mejor modelo
+    # usando validation, para no usar test durante el ajuste de pesos.
     train_records, categories = load_records(
         args.annotations, args.dataset_root, args.splits, "train"
     )
@@ -367,10 +371,12 @@ def main() -> None:
         if improved:
             best_validation_loss = validation_loss
             epochs_without_improvement = 0
+            # La app y la evaluación final usan el mejor checkpoint de validation.
             model.save_pretrained(args.output_dir / "best_model")
             processor.save_pretrained(args.output_dir / "best_model")
         else:
             epochs_without_improvement += 1
+        # Este estado completo permite reanudar optimizador, AMP y early stopping.
         torch.save(
             {
                 "epoch": epoch + 1,

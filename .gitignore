@@ -18,10 +18,20 @@ htmlcov/
 # Local data and generated annotations
 reto-1-cartografa-automatizada/
 data_panoptic_auto/
-data_panoptic_stuff/
+# Keep the reviewed panoptic annotations and EfficientPS-ready derivatives.
 
 # Training runs, checkpoints, and inference outputs
-training/runs/
+training/runs/*
+!training/runs/comparison_final/
+training/runs/comparison_final/*
+!training/runs/comparison_final/comparison.md
+!training/runs/comparison_final/comparison.csv
+!training/runs/comparison_final/*.png
+!training/runs/comparison_final/predictions/
+training/runs/comparison_final/predictions/*
+!training/runs/comparison_final/predictions/both/
+training/runs/comparison_final/predictions/both/*
+!training/runs/comparison_final/predictions/both/*.png
 work_dirs/
 tmpDir/
 *.pth

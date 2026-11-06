@@ -4,6 +4,91 @@ Proyecto para adaptar las anotaciones, entrenar y comparar Mask2Former y
 EfficientPS con el dataset de cartografía automatizada. Esta guía describe el
 entorno de anotación, entrenamiento y exploración para Ubuntu 22.04.
 
+## Inicio rápido: instalar y ejecutar Streamlit
+
+Estos pasos parten de una copia nueva del repositorio. Los comandos se ejecutan
+desde la carpeta raíz `cartografia_panoptica`; no es necesario tener el dataset
+original para probar la aplicación. El repositorio incluye las anotaciones
+panópticas procesadas y el reporte. Los pesos actuales se descargan por separado
+desde una GitHub Release para evitar incluir archivos de cientos de megabytes en
+el historial Git.
+
+Clona el proyecto e ingresa a la carpeta:
+
+```bash
+cd "$HOME"
+git clone https://github.com/JuanChaustre/cartografia_panoptica.git
+cd "$HOME/cartografia_panoptica"
+```
+
+En Ubuntu 22.04 instala Python, `venv` y las bibliotecas del sistema:
+
+```bash
+cd "$HOME/cartografia_panoptica"
+sudo apt update
+sudo apt install -y python3 python3-venv python3-tk git curl
+```
+
+Crea el entorno e instala PyTorch. Elige un solo comando de instalación según
+el equipo:
+
+```bash
+cd "$HOME/cartografia_panoptica"
+python3 -m venv .venv-mask2former
+.venv-mask2former/bin/python -m pip install --upgrade pip
+# Para equipos NVIDIA:
+.venv-mask2former/bin/python -m pip install \
+  torch==2.5.1 torchvision==0.20.1 \
+  --index-url https://download.pytorch.org/whl/cu121
+```
+
+Para una instalación solo CPU, ejecuta este comando en lugar del anterior:
+
+```bash
+cd "$HOME/cartografia_panoptica"
+.venv-mask2former/bin/python -m pip install \
+  torch==2.5.1 torchvision==0.20.1 \
+  --index-url https://download.pytorch.org/whl/cpu
+```
+
+Instala el resto de las dependencias de Mask2Former y Streamlit:
+
+```bash
+cd "$HOME/cartografia_panoptica"
+.venv-mask2former/bin/python -m pip install \
+  -r training/requirements-mask2former.txt \
+  -r requirements-streamlit.txt
+```
+
+Descarga y verifica los pesos de las dos ejecuciones comparadas. Se requieren
+conexión a Internet y `sha256sum`:
+
+```bash
+cd "$HOME/cartografia_panoptica"
+bash tools/descargar_modelos.sh
+```
+
+Inicia la aplicación:
+
+```bash
+cd "$HOME/cartografia_panoptica"
+.venv-mask2former/bin/python -m streamlit run streamlit_app.py
+```
+
+Abre `http://localhost:8501`. Mask2Former también puede ejecutarse en CPU;
+EfficientPS original requiere una GPU NVIDIA y su entorno legado independiente.
+Para usar ambos modelos en Ubuntu instala ese entorno antes de iniciar Streamlit:
+
+```bash
+cd "$HOME/cartografia_panoptica"
+env -u PYTHONPATH bash tools/instalar_efficientps_original.sh
+```
+
+El dataset original no se versiona. Para entrenar, descarga el ZIP desde el
+notebook incluido, extrae `reto-1-cartografa-automatizada` en la carpeta
+inmediatamente superior al repositorio y sigue la sección
+[Entrenamiento y evaluación](#entrenamiento-y-evaluación).
+
 ## Estado y formato del dataset
 
 - `Dataset segmentacion` contiene 100 imágenes RGB `recorte_N.png` de 500×500 y
@@ -20,10 +105,11 @@ entorno de anotación, entrenamiento y exploración para Ubuntu 22.04.
   revisión/corrección manual.
 - `Recortes adicionales` contiene imágenes sin máscaras. Se reservan para
   inferencia, no para entrenamiento supervisado.
-- Las anotaciones COCO Panoptic actuales están en `data_panoptic_auto`. La
-  validación estructural más reciente pasó con 100 imágenes y 4.908 segmentos.
-  Esa validación comprueba formato e IDs, no la calidad semántica de cada
-  polígono.
+- `data_panoptic_auto` contiene las anotaciones preliminares generadas
+  localmente. La versión revisada con acera como stuff se distribuye en
+  `data_panoptic_stuff`; la validación estructural más reciente pasó con 100
+  imágenes y 4.908 segmentos. Esa validación comprueba formato e IDs, no la
+  calidad semántica de cada polígono.
 
 ## Definición panóptica acordada
 
@@ -49,12 +135,13 @@ por prioridad (verde > construida > caminable > carretera), asigna un ID a cada
 componente conectado de las tres clases thing y agrupa toda la carretera de cada
 imagen en un solo segmento stuff. Los píxeles sin etiqueta quedan como void.
 
-Desde `Taller 3Cartografia`, con el entorno activado:
+Desde la raíz del repositorio:
 
 ```bash
-python cartografia_panoptica/tools/convertir_semantico_a_panoptico.py \
-  --dataset ./reto-1-cartografa-automatizada \
-  --output ./cartografia_panoptica/data_panoptic_auto
+cd "$HOME/cartografia_panoptica"
+.venv/bin/python tools/convertir_semantico_a_panoptico.py \
+  --dataset ../reto-1-cartografa-automatizada \
+  --output ./data_panoptic_auto
 ```
 
 La conectividad por defecto es 8 (también se puede especificar `--connectivity 4`).
@@ -64,18 +151,20 @@ reemplazarlos; revisa la ruta antes de usar `--overwrite`.
 Valida la salida:
 
 ```bash
-python cartografia_panoptica/tools/validar_anotaciones.py \
-  --dataset ./reto-1-cartografa-automatizada \
-  --annotations ./cartografia_panoptica/data_panoptic_auto/annotations/panoptic.json
+cd "$HOME/cartografia_panoptica"
+.venv/bin/python tools/validar_anotaciones.py \
+  --dataset ../reto-1-cartografa-automatizada \
+  --annotations ./data_panoptic_auto/annotations/panoptic.json
 ```
 
 Abre el anotador sobre esa salida para revisar y corregir las instancias
 generadas, sin regenerar las máscaras:
 
 ```bash
-python cartografia_panoptica/tools/anotar_instancias.py \
-  --dataset ./reto-1-cartografa-automatizada \
-  --output ./cartografia_panoptica/data_panoptic_auto
+cd "$HOME/cartografia_panoptica"
+.venv/bin/python tools/anotar_instancias.py \
+  --dataset ../reto-1-cartografa-automatizada \
+  --output ./data_panoptic_auto
 ```
 
 Luego inspecciona las máscaras visualmente. La prioridad es una regla acordada
@@ -93,10 +182,11 @@ copia derivada y fusiona todos los segmentos de acera de cada imagen en un
 segmento:
 
 ```bash
-env -u PYTHONPATH cartografia_panoptica/.venv-mask2former/bin/python \
-  cartografia_panoptica/tools/convertir_clase_a_stuff.py \
-  --annotations cartografia_panoptica/data_panoptic_auto/annotations/panoptic.json \
-  --output cartografia_panoptica/data_panoptic_stuff \
+cd "$HOME/cartografia_panoptica"
+env -u PYTHONPATH .venv-mask2former/bin/python \
+  tools/convertir_clase_a_stuff.py \
+  --annotations data_panoptic_auto/annotations/panoptic.json \
+  --output data_panoptic_stuff \
   --category-id 1 --category-name acera
 ```
 
@@ -104,10 +194,11 @@ La conversión copia también el `splits.json` para mantener los mismos IDs en
 train/validation/test. Verifica la copia sin alterar los originales:
 
 ```bash
-env -u PYTHONPATH cartografia_panoptica/.venv-mask2former/bin/python \
-  cartografia_panoptica/tools/validar_anotaciones.py \
-  --dataset reto-1-cartografa-automatizada \
-  --annotations cartografia_panoptica/data_panoptic_stuff/annotations/panoptic.json
+cd "$HOME/cartografia_panoptica"
+env -u PYTHONPATH .venv-mask2former/bin/python \
+  tools/validar_anotaciones.py \
+  --dataset ../reto-1-cartografa-automatizada \
+  --annotations data_panoptic_stuff/annotations/panoptic.json
 ```
 
 La copia migrada conserva los mapas de clase por píxel: se verificaron las 100
@@ -142,12 +233,12 @@ notebook, la descarga opcional desde Kaggle y el anotador. Las dependencias de
 entrenamiento se instalan en entornos separados para aislar las versiones de
 PyTorch y sus bibliotecas de modelos.
 
-Desde la carpeta `Taller 3Cartografia`:
+Desde la raíz del repositorio:
 
 ```bash
 sudo apt update
-sudo apt install python3-venv python3-tk
-cd cartografia_panoptica
+sudo apt install -y python3-venv python3-tk
+cd "$HOME/cartografia_panoptica"
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
@@ -158,27 +249,27 @@ python -m ipykernel install --user \
 ```
 
 Selecciona el kernel **Python (Cartografía panóptica)** para
-`../Visualización Dataset Cartografía Automatizada.ipynb`. El notebook busca el
-directorio del proyecto desde el directorio de trabajo actual y funciona tanto
-con el ZIP local como con el dataset ya extraído. Sus salidas guardadas son de
-la ejecución anterior en Windows; vuelve a ejecutar las celdas para refrescar
-las rutas y visualizaciones.
+`Visualización Dataset Cartografía Automatizada.ipynb`, que está en la raíz del
+repositorio. El notebook descarga y extrae el dataset junto a la carpeta del
+proyecto. Vuelve a ejecutar sus celdas para actualizar rutas y visualizaciones.
 
 Para descargar el ZIP desde Kaggle, se necesita una cuenta y el archivo
 `~/.config/kaggle/kaggle.json` (o `~/.kaggle/kaggle.json` en versiones
 anteriores de la CLI). Protege las credenciales con:
 
 ```bash
+cd "$HOME/cartografia_panoptica"
 chmod 600 ~/.config/kaggle/kaggle.json
 ```
 
-Desde la carpeta `Taller 3Cartografia`, activa el entorno y ejecuta el anotador:
+Desde la raíz del repositorio, activa el entorno y ejecuta el anotador:
 
 ```bash
-source cartografia_panoptica/.venv/bin/activate
-python cartografia_panoptica/tools/anotar_instancias.py \
-  --dataset ./reto-1-cartografa-automatizada \
-  --output ./cartografia_panoptica/data_panoptic
+cd "$HOME/cartografia_panoptica"
+source .venv/bin/activate
+python tools/anotar_instancias.py \
+  --dataset ../reto-1-cartografa-automatizada \
+  --output ./data_panoptic
 ```
 
 Controles:
@@ -197,9 +288,10 @@ continuar.
 Valida la exportación antes de usarla:
 
 ```bash
-python cartografia_panoptica/tools/validar_anotaciones.py \
-  --dataset ./reto-1-cartografa-automatizada \
-  --annotations ./cartografia_panoptica/data_panoptic/annotations/panoptic.json
+cd "$HOME/cartografia_panoptica"
+python tools/validar_anotaciones.py \
+  --dataset ../reto-1-cartografa-automatizada \
+  --annotations ./data_panoptic/annotations/panoptic.json
 ```
 
 La validación comprueba que cada imagen anotada tenga máscara RGB válida, que los
@@ -233,16 +325,18 @@ Mask2Former usa la implementación de Hugging Face del modelo en un entorno
 aislado Python 3.10; las ruedas PyTorch incluyen CUDA 12.1, compatible con el
 driver instalado. EfficientPS original usa el entorno legado descrito arriba.
 
-Desde `Taller 3Cartografia`, crea los entornos:
+Desde la raíz del repositorio, crea el entorno:
 
 ```bash
-python3 -m venv cartografia_panoptica/.venv-mask2former
-cartografia_panoptica/.venv-mask2former/bin/python -m pip install --upgrade pip
-cartografia_panoptica/.venv-mask2former/bin/python -m pip install \
+cd "$HOME/cartografia_panoptica"
+python3 -m venv .venv-mask2former
+.venv-mask2former/bin/python -m pip install --upgrade pip
+.venv-mask2former/bin/python -m pip install \
   torch==2.5.1 torchvision==0.20.1 \
   --index-url https://download.pytorch.org/whl/cu121
-cartografia_panoptica/.venv-mask2former/bin/python -m pip install \
-  -r cartografia_panoptica/training/requirements-mask2former.txt
+.venv-mask2former/bin/python -m pip install \
+  -r training/requirements-mask2former.txt \
+  -r requirements-streamlit.txt
 ```
 
 Verifica `torch.cuda.is_available()` antes de entrenar. Esta comprobación solo
@@ -256,8 +350,8 @@ El instalador crea el entorno legado aislado, compila las extensiones CUDA del
 repositorio y prueba NMS en la GPU:
 
 ```bash
-cd "Taller 3Cartografia"
-env -u PYTHONPATH bash cartografia_panoptica/tools/instalar_efficientps_original.sh
+cd "$HOME/cartografia_panoptica"
+env -u PYTHONPATH bash tools/instalar_efficientps_original.sh
 ```
 
 La creación/compilación puede tardar y descargar varios GB. Si falla la prueba
@@ -280,9 +374,10 @@ Con el archivo panóptico revisado y validado, crea una partición reproducible
 por imagen (70 % train, 15 % validation, 15 % test; semilla 42):
 
 ```bash
-python cartografia_panoptica/tools/crear_particiones.py \
-  --annotations ./cartografia_panoptica/data_panoptic_auto/annotations/panoptic.json \
-  --output ./cartografia_panoptica/data_panoptic_auto/splits.json
+cd "$HOME/cartografia_panoptica"
+.venv-mask2former/bin/python tools/crear_particiones.py \
+  --annotations ./data_panoptic_auto/annotations/panoptic.json \
+  --output ./data_panoptic_auto/splits.json
 ```
 
 El archivo de particiones se comparte entre ambos modelos para que las métricas
@@ -296,7 +391,7 @@ Después de convertir acera a stuff, los scripts usan
 `data_panoptic_stuff/annotations/panoptic.json` y `splits.json` por defecto.
 Revalida ese JSON después de cambiar anotaciones; no entrenes ni reportes
 métricas con componentes automáticos sin revisar. Las imágenes se buscan en
-`../reto-1-cartografa-automatizada` desde la carpeta `Taller 3Cartografia`;
+`../reto-1-cartografa-automatizada` desde la raíz del repositorio;
 cambia `--dataset-root` si tu extracción está en otra ruta.
 
 Mask2Former inicia a 256×256 para limitar el uso de memoria de la RTX 3050 de
@@ -305,17 +400,18 @@ un máximo de 40 épocas y early stopping con paciencia 8 sobre `validation_loss
 Conserva el checkpoint con menor pérdida de validation. La evaluación de test
 se ejecuta al terminar y no interviene en la selección del checkpoint.
 
-Entrena desde cero con la nueva ontología. Usa estos comandos desde
-`Taller 3Cartografia`; `--epochs 40` es el máximo total de épocas y `--patience
+Entrena desde cero con la nueva ontología. Usa estos comandos desde la raíz del
+repositorio; `--epochs 40` es el máximo total de épocas y `--patience
 8` activa early stopping. No reanudes los checkpoints anteriores, ya que fueron
 entrenados con acera como thing:
 
 ```bash
-env -u PYTHONPATH cartografia_panoptica/.venv-mask2former/bin/python \
-  cartografia_panoptica/training/train_mask2former.py \
+cd "$HOME/cartografia_panoptica"
+env -u PYTHONPATH .venv-mask2former/bin/python \
+  training/train_mask2former.py \
   --epochs 40 --patience 8
 
-env -u PYTHONPATH bash cartografia_panoptica/tools/entrenar_efficientps_original.sh
+env -u PYTHONPATH bash tools/entrenar_efficientps_original.sh
 ```
 
 En Mask2Former puedes exigir una reducción mínima de pérdida de 0.01 con
@@ -325,7 +421,7 @@ dataset o particiones. Si CUDA informa falta de memoria, baja `--image-size`
 en su config; no
 cambies las particiones entre ejecuciones. Para conservar una ejecución previa,
 indica otro directorio, por ejemplo:
-`WORK_DIR=cartografia_panoptica/training/runs/efficientps_original_run2`.
+`WORK_DIR="$PWD/training/runs/efficientps_original_run2"`.
 
 Cada modelo guarda en `training/runs/<modelo>/`:
 
@@ -341,13 +437,14 @@ Cada modelo guarda en `training/runs/<modelo>/`:
 - `test_predictions/`: predicciones panópticas COCO del split test.
 
 EfficientPS oficial puede continuar una ejecución interrumpida siempre que se
-conserven juntos el checkpoint y `loss_history.csv`. Desde `Taller 3Cartografia`,
-por ejemplo:
+conserven juntos el checkpoint y `loss_history.csv`. Desde la raíz del
+repositorio, por ejemplo:
 
 ```bash
-WORK_DIR="$PWD/cartografia_panoptica/training/runs/efficientps_original_reintento" \
-RESUME_FROM="$PWD/cartografia_panoptica/training/runs/efficientps_original_reintento/latest.pth" \
-  env -u PYTHONPATH bash cartografia_panoptica/tools/entrenar_efficientps_original.sh
+cd "$HOME/cartografia_panoptica"
+WORK_DIR="$PWD/training/runs/efficientps_original_reintento" \
+RESUME_FROM="$PWD/training/runs/efficientps_original_reintento/latest.pth" \
+  env -u PYTHONPATH bash tools/entrenar_efficientps_original.sh
 ```
 
 La reanudación restaura el optimizador, la época y el historial de pérdida que
@@ -359,8 +456,9 @@ Para inspeccionar las predicciones junto a la imagen original y el ground truth,
 genera overlays comparativos de las 15 imágenes de test:
 
 ```bash
-env -u PYTHONPATH cartografia_panoptica/.venv-mask2former/bin/python \
-  cartografia_panoptica/training/visualizar_predicciones.py --model both
+cd "$HOME/cartografia_panoptica"
+env -u PYTHONPATH .venv-mask2former/bin/python \
+  training/visualizar_predicciones.py --model both
 ```
 
 La hoja completa se guarda en
@@ -374,8 +472,9 @@ previsualización pequeña agrega `--max-images 3`.
 Cuando ambos modelos hayan terminado, genera el reporte comparativo:
 
 ```bash
-env -u PYTHONPATH cartografia_panoptica/.venv-mask2former/bin/python \
-  cartografia_panoptica/training/compare_results.py
+cd "$HOME/cartografia_panoptica"
+env -u PYTHONPATH .venv-mask2former/bin/python \
+  training/compare_results.py
 ```
 
 Por defecto toma las ejecuciones recientes `mask2former_stuff_reentrenado` y
@@ -402,10 +501,10 @@ y 384×384 para EfficientPS original. El recorte coincide con la proporción de
 las imágenes de entrenamiento, pero no garantiza mejores predicciones y descarta
 la parte exterior; se puede desactivar.
 
-Instala Streamlit en el entorno de Mask2Former desde la carpeta
-`cartografia_panoptica`:
+Desde la raíz del repositorio:
 
 ```bash
+cd "$HOME/cartografia_panoptica"
 .venv-mask2former/bin/python -m pip install -r requirements-streamlit.txt
 .venv-mask2former/bin/python -m streamlit run streamlit_app.py
 ```
@@ -418,25 +517,33 @@ o ambos sobre la misma imagen. La pestaña **Reporte comparativo** muestra el
 contenido de `training/runs/comparison_final/comparison.md` junto con sus
 gráficas y comparaciones visuales.
 
-## Preparar el proyecto para GitHub
+## Datos, modelos y archivos publicados
 
-El repositorio contiene código y documentación, no los datos de imágenes,
-anotaciones generadas, entornos virtuales ni pesos de modelos. Descarga el
-dataset por separado y colócalo junto a la carpeta `cartografia_panoptica` con
-el nombre `reto-1-cartografa-automatizada`, o modifica la ruta indicada por los
-scripts/configuraciones. Los directorios `data_panoptic_auto`,
-`data_panoptic_stuff` y `training/runs` se generan localmente y están excluidos
-por `.gitignore`.
+El repositorio incluye `data_panoptic_stuff` (anotaciones procesadas y
+preparación de etiquetas para EfficientPS), el notebook de descarga y
+`training/runs/comparison_final` (reporte, gráficas y comparaciones de test).
+No incluye el dataset original, entornos virtuales ni artefactos temporales de
+entrenamiento. Los dos checkpoints usados por la aplicación se distribuyen en
+la GitHub Release `modelos-v1.0.0` como un archivo comprimido; ejecuta
+`bash tools/descargar_modelos.sh` para descargarlos y ubicarlos en las rutas que
+esperan Streamlit.
 
-El código upstream de EfficientPS incluido en `third_party/EfficientPS`
-conserva su licencia GPL-3.0. Revisa las licencias y condiciones del dataset,
-pesos preentrenados y dependencias antes de redistribuirlos. Este proyecto no
-declara una licencia propia; añade una solo cuando se haya decidido quién tiene
-los derechos para publicarlo y bajo qué términos.
+El dataset original debe descargarse con el notebook
+`Visualización Dataset Cartografía Automatizada.ipynb` y extraerse como
+`../reto-1-cartografa-automatizada` con respecto a la raíz del repositorio. La
+aplicación de Streamlit solo requiere los pesos descargados y las anotaciones
+procesadas incluidas en Git; el dataset original sí es necesario para volver a
+entrenar.
 
-Para clonar y preparar los datos, sigue las instrucciones de instalación y
-conversión de este README. El entrenamiento de EfficientPS requiere CUDA y su
-entorno legado documentado en
-`training/efficientps_original/environment.yml`; Mask2Former y las herramientas
-de métricas usan `requirements.txt`. La interfaz Streamlit instala además
+`.gitignore` excluye los entornos, el dataset original y los resultados de
+entrenamiento; conserva únicamente el reporte comparativo. Los pesos grandes
+se mantienen fuera del historial Git para que clonar el código no descargue
+cientos de megabytes automáticamente. Revisa licencias y condiciones de uso del
+dataset, pesos preentrenados y dependencias antes de redistribuirlos. El código
+upstream de EfficientPS incluido en `third_party/EfficientPS` conserva su
+licencia GPL-3.0; este proyecto no declara una licencia propia.
+
+El entrenamiento de EfficientPS requiere CUDA y su entorno legado documentado
+en `training/efficientps_original/environment.yml`; Mask2Former usa
+`training/requirements-mask2former.txt` y Streamlit se instala con
 `requirements-streamlit.txt`.

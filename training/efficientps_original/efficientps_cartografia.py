@@ -3,6 +3,7 @@ import os
 from mmdet.datasets import CityscapesDataset
 
 
+# CityscapesDataset usa estas clases como nombres de las ramas thing y stuff.
 CityscapesDataset.CLASSES = ("manzana_construida", "zona_verde")
 CityscapesDataset.STUFF_CLASSES = ("acera", "carretera")
 
@@ -23,6 +24,7 @@ RUN_ROOT = os.path.join(
 
 model = dict(
     pretrained=True,
+    # B0 y 384x384 reducen el uso de VRAM respecto a la configuración original.
     backbone=dict(
         type="tf_efficientnet_b0",
         act_cfg=dict(type="Identity"),
@@ -44,6 +46,7 @@ img_norm_cfg = dict(
 train_pipeline = [
     dict(type="LoadImageFromFile"),
     dict(type="LoadAnnotations", with_bbox=True, with_mask=True, with_seg=True),
+    # Recorta después de escalar para mantener una entrada cuadrada de 384px.
     dict(
         type="Resize",
         img_scale=(384, 384),

@@ -1,0 +1,3 @@
+Modelo,IoU,mAP,F1,Precisión,PQ,Ventajas observadas,Limitaciones
+Mask2Former,0.639040,0.228798,0.761705,0.800582,0.371272,"Mejor resultado de esta comparación en IoU, F1, precisión, mAP y PQ.",El ajuste parte de pesos COCO y solo 100 recortes; el backbone Swin y el decodificador exigen más VRAM que el modelo compacto.
+EfficientPS original,0.478345,0.001703,0.632216,0.720366,0.089541,Implementación oficial con ramas de instancias y semántica y fusión panóptica del método.,Stack legado adaptado y experimental; en estos resultados la detección de instancias queda muy por debajo de Mask2Former.
